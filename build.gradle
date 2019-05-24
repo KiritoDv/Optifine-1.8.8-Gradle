@@ -16,14 +16,6 @@ repositories {
     mavenCentral()
 }
 
-fileTree(dir: 'jars/libraries/me/kiritodev').include('*.jar').each { simLib ->
-    copy {
-        println "Unzip $simLib.name"
-        from zipTree("jars/libraries/me/kiritodev/${simLib.name}")
-        into "jars/versions/1.8.8/natives"
-    }
-}
-
 def currentOs(){
     def osName = System.properties['os.name'].toLowerCase()
     def path = ""
@@ -38,6 +30,15 @@ def currentOs(){
 }
 
 run {
+
+    fileTree(dir: 'jars/libraries/me/kiritodev').include('*.jar').each { simLib ->
+        copy {
+            println "Unzip $simLib.name"
+            from zipTree("jars/libraries/me/kiritodev/${simLib.name}")
+            into "jars/versions/1.8.8/natives"
+        }
+    }
+
     workingDir = new File("jars")
 
     copy {
