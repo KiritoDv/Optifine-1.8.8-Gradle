@@ -12,7 +12,10 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories {    
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
     ivy {
         url 'https://libraries.minecraft.net/'
         layout 'pattern', {
@@ -20,10 +23,6 @@ repositories {
             m2compatible = true
         }
     }
-    mavenCentral()
-    jcenter()
-    maven { url 'http://java.freehep.org/maven2/' }
-    maven { url 'https://jitpack.io' }
 }
 
 def currentOs(){
@@ -98,6 +97,7 @@ dependencies {
 run {
     println "Launching Client"
     workingDir = new File("jars")
+    if(!workingDir.exists()) workingDir.mkdir();
 }
 
 task unzipNatives(type: Copy) {
@@ -115,4 +115,12 @@ task copyAssets(type: Copy) {
     println "Copying assets"
     from currentOs()+"\\assets"
     into "jars\\assets"
+}
+
+task startGame {
+    dependsOn 'unzipNatives'
+    dependsOn 'copyAssets'
+    dependsOn 'run'
+    tasks.findByName('unzipNatives').mustRunAfter 'copyAssets'
+    tasks.findByName('run').mustRunAfter 'unzipNatives'
 }
